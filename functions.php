@@ -37,6 +37,17 @@ function filter_info($str) {
     $text = htmlspecialchars($str);
     return $text;
 }
+
+// ----- Функция подсчета дедлайна задачи -----
+function deadline($value) {
+	$date_st = strtotime($value);
+    $end_time = $date_st - time();
+    $value_date = ($end_time <= 86400)? true : false;
+    if($value === ''){
+        $value_date = false;
+    }
+    return $value_date;
+}
 ?>
 
 

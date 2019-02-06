@@ -6,25 +6,25 @@ $project_list = ['Входящие', 'Учеба', 'Работа', 'Домашн
 $task_list = [
 	[
 		'task' => 'Собеседование в IT компании',
-		'datePerformed' => '01.12.2018',
+		'datePerformed' => '01.12.2019',
 		'category' => 'Работа',
 		'isDone' => false
 	],
 	[
 		'task' => 'Выполнить тестовое задание',
-		'datePerformed' => '25.12.2018',
+		'datePerformed' => '25.12.2019',
 		'category' => 'Работа',
 		'isDone' => false
 	],
 	[
 		'task' => 'Сделать задание первого раздела',
-		'datePerformed' => '21.12.2018',
+		'datePerformed' => '21.12.2019',
 		'category' => 'Учеба',
 		'isDone' => true
 	],
 	[
 		'task' => 'Встреча с другом',
-		'datePerformed' => '22.12.2018',
+		'datePerformed' => '05.01.2019',
 		'category' => 'Входящие',
 		'isDone' => false
 	],
