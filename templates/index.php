@@ -24,13 +24,13 @@
 
 <table class="tasks">
 	<?php foreach ($task_list as $key_task_list => $value_task_list): ?>
-	<?php if (!$value_task_list['isDone'] || ($value_task_list['isDone'] && $show_complete_tasks)): ?>
-    <tr class="tasks__item task <?php if($value_task_list["isDone"]): ?> task--completed <?php endif;?>
-    <?php if(deadline($value_task_list["datePerformed"])): ?> task--important <?php endif;?>">
+	<?php if (!$value_task_list['status'] || ($value_task_list['status'] && $show_complete_tasks)): ?>
+    <tr class="tasks__item task <?php if($value_task_list["status"]): ?> task--completed <?php endif;?>
+    <?php if(deadline($value_task_list["deadline"])): ?> task--important <?php endif;?>">
         <td class="task__select">
             <label class="checkbox task__checkbox">
                 <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
-                <span class="checkbox__text"><?=filter_info($value_task_list["task"]);?> </span>
+                <span class="checkbox__text"><?=filter_info($value_task_list["name"]);?> </span>
             </label>
         </td>
 
@@ -38,7 +38,7 @@
             <a class="download-link" href="#">Home.psd</a>
         </td>
 
-        <td class="task__date"><?=$value_task_list["datePerformed"];?></td>
+        <td class="task__date"><?=$value_task_list["deadline"];?></td>
     </tr>
     <?php endif; ?>
 	<?php endforeach; ?>
