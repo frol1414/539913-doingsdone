@@ -4,7 +4,7 @@ INSERT INTO `user` (name, email, password) VALUES
 	('Дарт Вейдер', 'dartVader@hz.ru', 1234);
 
 /*Ввод категорий задач*/
-INSERT INTO `category` (user_id, category_name) VALUES
+INSERT INTO `projects` (user_id, projects_name) VALUES
     (2,'Входящие'), 
     (1,'Учеба'), 
 	(1,'Работа'),
@@ -12,26 +12,23 @@ INSERT INTO `category` (user_id, category_name) VALUES
 	(2,'Авто');
 
 /*Ввод задач*/
-INSERT INTO `task` (category_id, task_status, task_name, deadline) VALUES 
-	(3, 0, 'Собеседование в IT компании', '01.12.2019'),
-    (3, 0, 'Выполнить тестовое задание', '25.12.2019'),
-    (2, 1, 'Сделать задание первого раздела', '21.12.2019'),
-    (1, 0, 'Встреча с другом', '22.12.2019'),
-    (4, 0, 'Купить корм для кота', NULL ),
-    (4, 0, 'Заказать пиццу', NULL );
+INSERT INTO tasks (creation_date, execution_date, status, name, file, deadline, user_id, projects_id) VALUES
+	('2018-10-10 22:00:00', NULL, 0, 'Собеседование в IT компании', 'работа.psd', '2018-12-01 00:00:00', 1, 3),
+    ('2018-11-11 22:00:00', NULL, 0, 'Выполнить тестовое задание', 'работа.psd', '2018-11-29 00:00:00', 2, 3),
+    ('2018-11-14 22:00:00', '2018-11-15 22:00:00', 1, 'Сделать задание первого раздела', 'учеба.psd', '2018-12-21 00:00:00', 1, 2),
+    ('2018-11-18 22:00:00', NULL, 0, 'Купить корм для кота', NULL, NULL, 1, 4),
+    ('2018-11-18 22:00:00', NULL, 0, 'Заказать пиццу', NULL, NULL, 2, 4);
 
 ----- Получить список из всех проектов для одного пользователя -----
-SELECT * FROM category
-	WHERE user_id = 1;
+SELECT * FROM projects WHERE user_id = 1;
 
 ----- Получить список из всех задач для одного проекта -----
-SELECT * FROM task
-	WHERE category_id = 3;
+SELECT * FROM tasks WHERE project_id = 1;
 
 ----- Пометить задачу как выполненную -----
-UPDATE task SET task_status = 1
-	WHERE task_name = 'Купить корм для кота';
+UPDATE tasks SET status = 1
+WHERE task_id = 5;
 
 ----- Jбновить название задачи по её идентификатору -----
-UPDATE task SET task_name = 'Купить корм для кота-обжоры'
+UPDATE tasks SET name = 'Купить корм для кота-обжоры'
 	WHERE task_id = 5;

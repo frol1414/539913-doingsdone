@@ -25,7 +25,7 @@ function count_tasks($array, $name)
 {
 	$result = 0;
 	foreach ($array as $key => $value) {
-		if ($value["category"] === $name) {
+		if ($value["projects_id"] === $name) {
 			$result++;
 		}
 	}
