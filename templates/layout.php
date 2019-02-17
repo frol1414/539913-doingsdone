@@ -45,7 +45,7 @@
                     <ul class="main-navigation__list">
                     	<?php foreach ($project_list as $key => $value): ?>
                         <li class="main-navigation__list-item">
-                            <a class="main-navigation__list-item-link" href="#"><?=$value['projects_name'];?></a>
+                            <a class="main-navigation__list-item-link" href="index.php?projects_id=<?= $value['projects_id']; ?>"><?=$value['projects_name'];?></a>
                             <span class="main-navigation__list-item-count"><?=count_tasks($task_list, $value['projects_id']);?></span>
                         </li>
                     	<?php endforeach;?>

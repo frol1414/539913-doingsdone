@@ -48,6 +48,59 @@ function deadline($value) {
     }
     return $value_date;
 }
+
+// ----- Функция вызова задач для одного автора -----
+function get_projects($link, $user) {
+    $sql = "SELECT * FROM projects WHERE user_id = ?";
+    $stmt = db_get_prepare_stmt($link, $sql, [$user]);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    $project_list = mysqli_fetch_all($res, MYSQLI_ASSOC);
+    return $project_list;
+}
+
+// ----- Функция вызова имен категорий для одного автора -----
+function get_tasks_for_author_id ($link, $user) {
+    $sql = "SELECT * FROM tasks WHERE user_id = ?";
+    $stmt = db_get_prepare_stmt($link, $sql, [$user]);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    $task_list = mysqli_fetch_all($res, MYSQLI_ASSOC);
+    return $task_list;
+}
+
+// ----- Функция вызова задач для одного проекта -----
+function get_tasks_for_author_id_and_project($link, int $user, int $projects_id=null) {
+    if(!empty($projects_id)) {
+        $sql = "
+        SELECT DISTINCT tasks.*, projects.projects_name AS projects_name
+        FROM tasks
+        INNER JOIN projects ON tasks.projects_id = projects.projects_id
+        WHERE projects.user_id = ? AND tasks.projects_id = ?";
+        $stmt = db_get_prepare_stmt($link, $sql, [$user, $projects_id]);
+    } else {
+        $sql = "
+        SELECT DISTINCT tasks.*, projects.projects_name AS projects_name
+        FROM tasks
+        INNER JOIN projects ON tasks.projects_id = projects.projects_id
+        WHERE projects.user_id = ?";
+        $stmt = db_get_prepare_stmt($link, $sql, [$user]);
+    }
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    $task_list = mysqli_fetch_all($res, MYSQLI_ASSOC);
+    return $task_list;
+}
+
+function none_id($projects_id, $project_list) {
+    foreach($project_list as $list_info) {
+        if ($projects_id == $list_info['projects_id']) {
+            return true;
+        }
+    }
+    return false;
+}
+
 ?>
 
 
