@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $file = $path;
     }
     else {
-        $file = '';
+        $file = 'null';
     }
     if (empty($errors)) {
         add_task_form($link, $task_name, $file, $deadline, $user, $project_name);
