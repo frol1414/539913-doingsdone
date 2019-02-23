@@ -100,7 +100,13 @@ function none_id($projects_id, $project_list) {
     }
     return false;
 }
+// ----- Добавление задач в БД -----
+function add_task_form($link, $task_name, $file, $deadline, $user, $project_name) {
+    $sql = 'INSERT INTO tasks (creation_date, execution_date, status, name, file, deadline, user_id, projects_id)
+        VALUES (NOW(), NULL, 0, ?, ?, ' . $deadline . ', ?, ?)';
+        $stmt = db_get_prepare_stmt($link, $sql,  [$task_name, $file, $user, $project_name]);
+        mysqli_stmt_execute($stmt);
+}
+
 
 ?>
-
-

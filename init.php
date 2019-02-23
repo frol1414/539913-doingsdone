@@ -5,12 +5,10 @@ ini_set('display_startup_errors', 1);
 
 require_once ('functions.php');
 require_once ('config/db.php');
-
+$title = 'Дела в порядке';
 $link = mysqli_connect($db['host'], $db['user'], $db['password'], $db['database']);
 mysqli_set_charset($link, "utf8");
 $project_list = [];
 $task_list = [];
 $content = '';
 ?>
-
-
