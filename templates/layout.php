@@ -21,23 +21,30 @@
             </a>
 
             <div class="main-header__side">
+                <?php if (!empty($_SESSION['user'])) : ?>
                 <a class="main-header__side-item button button--plus open-modal" href="add.php">Добавить задачу</a>
-
+                <?php endif; ?>
                 <div class="main-header__side-item user-menu">
+                    <?php if (!empty($_SESSION['user'])) : ?>
                     <div class="user-menu__image">
-                        <img src="img/user.png" width="40" height="40" alt="Пользователь">
+                        <img src="img/user-pic.jpg" width="40" height="40" alt="Пользователь">
                     </div>
 
                     <div class="user-menu__data">
-                        <p>Константин</p>
-
-                        <a href="#">Выйти</a>
+                        <p><?= filter_info($_SESSION['user']['name']); ?></p>
+                        <a href="logout.php">Выйти</a>
                     </div>
+                    <?php else : ?>
+                    <div class="main-header__side">
+                        <a class="main-header__side-item button button--transparent" href="auth.php">Войти</a>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </header>
 
         <div class="content">
+            <?php if (!empty($_SESSION['user'])) : ?>
             <section class="content__side">
                 <h2 class="content__side-heading">Проекты</h2>
 
@@ -55,6 +62,13 @@
                 <a class="button button--transparent button--plus content__side-button"
                    href="pages/form-project.html" target="project_add">Добавить проект</a>
             </section>
+            <?php elseif (empty($_SESSION['user']) and $_SERVER['REQUEST_URI'] !=='/') : ?>
+            <section class="content__side">
+                <p class="content__side-info">Если у вас уже есть аккаунт, авторизуйтесь на сайте</p>
+
+                <a class="button button--transparent content__side-button" href="auth.php">Войти</a>
+            </section>
+            <?php endif; ?>
 
             <main class="content__main">
             	<?=$content;?>    
@@ -70,9 +84,9 @@
 
             <p>Веб-приложение для удобного ведения списка дел.</p>
         </div>
-
+        <?php if (!empty($_SESSION['user'])) : ?>
         <a class="main-footer__button button button--plus" href="pages/form-task.html">Добавить задачу</a>
-
+        <?php endif; ?>
         <div class="main-footer__social social">
             <span class="visually-hidden">Мы в соцсетях:</span>
             <a class="social__link social__link--facebook" href="#">

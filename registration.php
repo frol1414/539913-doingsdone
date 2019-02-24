@@ -4,15 +4,18 @@ require_once('init.php');
 $data = [];
 $errors = [];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-    if (!empty($_POST)) {
-        $data = $_POST;
+if (!empty($_POST)) {
+    foreach ($_POST as $key => $value) {
+        $data[$key] = mysqli_real_escape_string($link, $_POST[$key]);
     }
-// ----- Валидация на обязательные поля -----
     $required = ['email', 'password', 'name'];
+    // Обязательные поля
     foreach ($required as $key) {
-        if (empty($_POST[$key])) {
+        // Удаляет пробелы из начала и конца строки
+        if (!empty($data[$key])) {
+            $data[$key] = trim($data[$key]);
+        }
+        if (empty($data[$key])) {
             $errors[$key] = 'Это поле надо заполнить';
         }
     }
@@ -20,39 +23,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($errors['name']) and strlen($data['name']) > 64) {
         $errors['name'] = 'Имя должно быть не длиннее 64 символов';
     }
-    if (empty($errors['email']) and strlen($data['email']) > 64) {
-        $errors['email'] = 'E-mail должно быть не длиннее 64 символов';
-    }
-    if (empty($errors['password']) and strlen($data['password']) > 64) {
-        $errors['password'] = 'Пароль должно быть не длиннее 64 символов';
-    }
+
 // ----- Валидация e-mail -----
     if (!empty($data['email'])) {
-        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+        if (empty($errors['email']) and strlen($data['email']) > 128) {
+            $errors['email'] = 'E-mail не может быть длиннее 128 символов';
+        }
+        elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             $errors['email'] = 'E-mail введён некорректно';
         }
-        $sql = 'SELECT user_id FROM user WHERE email = ' . $data['email'];
+        $sql = 'SELECT user_id FROM user WHERE email = "' . $data['email'] . '"';
         $res = mysqli_query($link, $sql);
         if (mysqli_num_rows($res) > 0) {
             $errors['email'] = 'Пользователь с этим email уже зарегистрирован';
         }
     }
+
 // ----- Хеширование пароля -----
     if (!empty($data['password'])) {
+        if (empty($errors['password']) and strlen($data['password']) > 128) {
+            $errors['password'] = 'Пароль не может быть длиннее 64 символов';
+        }
         $password = password_hash($data['password'], PASSWORD_DEFAULT);
     }
     if (empty($errors)) {
-        $sql_add_user = 'INSERT INTO user (registration_date, email, name, password) VALUES (NOW(),' . $data['email'] . ', ' . $data['name'] . ', ' . $password . ')';
+        $sql_add_user = 'INSERT INTO user (registration_date, email, name, password) VALUES (NOW(), "' . $data['email'] . '", "' . $data['name'] . '", "' . $password . '")';
         $add_user = mysqli_query($link, $sql_add_user);
         if ($add_user) {
             header("Location: /539913-doingsdone/index.php");
         }
     }
 }
-$layout_content = include_template('reg.php', [
+$page_content = include_template('reg.php', [
     'data' => $data,
-    'errors' => $errors,
-    'title' => $title,
+    'errors' => $errors
+]);
+
+$layout_content = include_template('layout.php', [
+    'content' => $page_content,
+    'task_list' => '',
+    'project_list' => '',
+    'title' => $title_registration
 ]);
 print($layout_content);
 ?>
