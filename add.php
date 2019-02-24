@@ -2,14 +2,14 @@
 require_once ('functions.php');
 require_once ('init.php');
 require_once ('mysql_helper.php');
-$user = 2;
-$project_list = get_projects($link, $user);
-$task_list = get_tasks_for_author_id ($link, $user);
+
+
+$project_list = get_projects($link, $user_id);
+$task_list = get_tasks_for_author_id ($link, $user_id);
 $task = [];
 $errors = [];
 // ----- Валидация -----
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Экранируем спецсимволы
     if (!empty($_POST)) {
         $task = $_POST;
     }
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $file = 'null';
     }
     if (empty($errors)) {
-        add_task_form($link, $task_name, $file, $deadline, $user, $project_name);
+        add_task_form($link, $task_name, $file, $deadline, $user_id, $project_name);
         header("Location: /539913-doingsdone/index.php");
     }
 }
@@ -61,7 +61,7 @@ $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'task_list' => $task_list,
     'project_list' => $project_list,
-    'title' => $title
+    'title' => $title_add_task
 ]);
 print($layout_content);
 ?>
