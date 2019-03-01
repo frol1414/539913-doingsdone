@@ -4,8 +4,6 @@ require_once ('init.php');
 require_once ('mysql_helper.php');
 
 
-$project_list = get_projects($link, $user_id);
-$task_list = get_tasks_for_author_id ($link, $user_id);
 $task = [];
 $errors = [];
 // ----- Валидация -----

@@ -60,7 +60,7 @@
                 </nav>
 
                 <a class="button button--transparent button--plus content__side-button"
-                   href="pages/form-project.html" target="project_add">Добавить проект</a>
+                   href="/539913-doingsdone/add_project.php" target="project_add">Добавить проект</a>
             </section>
             <?php elseif (empty($_SESSION['user']) and $_SERVER['REQUEST_URI'] !=='/') : ?>
             <section class="content__side">

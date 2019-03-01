@@ -11,6 +11,7 @@ $title_main = 'Дела в порядке';
 $title_add_task = 'Добавление задачи';
 $title_auth = 'Аутентификация';
 $title_registration = 'Регистрация';
+$title_add_project = 'Добавление проекта';
 
 
 $link = mysqli_connect($db['host'], $db['user'], $db['password'], $db['database']);
@@ -22,4 +23,8 @@ $content = '';
 
 $user = !empty($_SESSION['user']) ?  $_SESSION['user'] : [];
 $user_id = !empty($user['user_id']) ? $user['user_id'] : '';
+
+$project_list = get_projects($link, $user_id);
+$task_list = get_tasks_for_author_id ($link, $user_id);
+
 ?>
