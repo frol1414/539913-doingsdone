@@ -60,7 +60,7 @@
                 </nav>
 
                 <a class="button button--transparent button--plus content__side-button"
-                   href="pages/form-project.html" target="project_add">Добавить проект</a>
+                   href="add_project.php" target="project_add">Добавить проект</a>
             </section>
             <?php elseif (empty($_SESSION['user']) and $_SERVER['REQUEST_URI'] !=='/') : ?>
             <section class="content__side">
@@ -85,7 +85,7 @@
             <p>Веб-приложение для удобного ведения списка дел.</p>
         </div>
         <?php if (!empty($_SESSION['user'])) : ?>
-        <a class="main-footer__button button button--plus" href="pages/form-task.html">Добавить задачу</a>
+        <a class="main-footer__button button button--plus" href="add.php">Добавить задачу</a>
         <?php endif; ?>
         <div class="main-footer__social social">
             <span class="visually-hidden">Мы в соцсетях:</span>

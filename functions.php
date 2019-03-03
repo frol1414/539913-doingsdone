@@ -17,9 +17,6 @@ function include_template($name, $data) {
     return $result;
 }
 
-// ----- Показывать или нет выполненные задачи -----
-$show_complete_tasks = rand(0, 1);
-
 // ----- Счетчик задач -----
 function count_tasks($array, $name)
 {
@@ -50,6 +47,11 @@ function deadline($value) {
 }
 
 // ----- Функция вызова задач для одного автора -----
+/**
+ * @param $link  Ресурс соединения
+ * @param $user Идентификатор автора
+ * @return array
+ */
 function get_projects($link, $user) {
     $sql = "SELECT * FROM projects WHERE user_id = ?";
     $stmt = db_get_prepare_stmt($link, $sql, [$user]);
@@ -60,6 +62,11 @@ function get_projects($link, $user) {
 }
 
 // ----- Функция вызова имен категорий для одного автора -----
+/**
+ * @param $link  Ресурс соединения
+ * @param $user Идентификатор автора
+ * @return array
+ */
 function get_tasks_for_author_id ($link, $user) {
     $sql = "SELECT * FROM tasks WHERE user_id = ?";
     $stmt = db_get_prepare_stmt($link, $sql, [$user]);
@@ -70,20 +77,26 @@ function get_tasks_for_author_id ($link, $user) {
 }
 
 // ----- Функция вызова задач для одного проекта -----
-function get_tasks_for_author_id_and_project($link, int $user, int $projects_id=null) {
+/**
+ * @param $link  Ресурс соединения
+ * @param $user Идентификатор автора
+ * @param $projects_id ID проекта (по умолчанию нет)
+ * @return array
+ */
+function get_tasks_for_author_id_and_project($link, $user, $projects_id = null) {
     if(!empty($projects_id)) {
         $sql = "
-        SELECT DISTINCT tasks.*, projects.projects_name AS projects_name
-        FROM tasks
-        INNER JOIN projects ON tasks.projects_id = projects.projects_id
-        WHERE projects.user_id = ? AND tasks.projects_id = ?";
+                SELECT DISTINCT tasks.*, projects.projects_name AS projects_name
+                FROM tasks
+                INNER JOIN projects ON tasks.projects_id = projects.projects_id
+                WHERE projects.user_id = ? AND tasks.projects_id = ?";
         $stmt = db_get_prepare_stmt($link, $sql, [$user, $projects_id]);
     } else {
         $sql = "
-        SELECT DISTINCT tasks.*, projects.projects_name AS projects_name
-        FROM tasks
-        INNER JOIN projects ON tasks.projects_id = projects.projects_id
-        WHERE projects.user_id = ?";
+                SELECT DISTINCT tasks.*, projects.projects_name AS projects_name
+                FROM tasks
+                INNER JOIN projects ON tasks.projects_id = projects.projects_id
+                WHERE projects.user_id = ?";
         $stmt = db_get_prepare_stmt($link, $sql, [$user]);
     }
     mysqli_stmt_execute($stmt);
@@ -100,13 +113,159 @@ function none_id($projects_id, $project_list) {
     }
     return false;
 }
+
+// ----- Регистрация пользователя -----
+/**
+ * @param $link Ресурс соединения
+ * @param $email Email пользователя
+ * @param $name Имя пользователя
+ * @param $password Пароль пользователя
+ * @return boolean
+ */
+function registration_user($link, $email, $name, $password) {
+    $sql = "
+            INSERT INTO user (registration_date, email, name, password)
+            VALUES (NOW(), ?, ?, ?)";
+        $stmt = db_get_prepare_stmt($link, $sql, [$email, $name, $password]);
+        mysqli_stmt_execute($stmt);
+}
+
 // ----- Добавление задач в БД -----
-function add_task_form($link, $task_name, $file, $deadline, $user, $project_name) {
-    $sql = 'INSERT INTO tasks (creation_date, execution_date, status, name, file, deadline, user_id, projects_id)
-        VALUES (NOW(), NULL, 0, ?, ?, ' . $deadline . ', ?, ?)';
+/**
+ * @param $link Ресурс соединения
+ * @param $task_name Имя задачи
+ * @param $file Файл
+ * @param $deadline Дедлайн задачи
+ * @param $user int Идентификатор автора
+ * @param $project_name Имя проекта
+ * @return boolean
+ */
+function add_task_form($link, $task_name, $file, $deadline, int $user, $project_name) {
+    $sql = "
+            INSERT INTO tasks (creation_date, execution_date, status, name, file, deadline, user_id, projects_id)
+            VALUES (NOW(), NULL, 0, ?, ?, ' . $deadline . ', ?, ?)";
         $stmt = db_get_prepare_stmt($link, $sql,  [$task_name, $file, $user, $project_name]);
         mysqli_stmt_execute($stmt);
 }
 
+// ----- Добавление проекта в БД -----
+/**
+ * @param $link Ресурс соединения
+ * @param $user_id ID автора
+ * @param $project_name Имя проекта
+ * @return boolean
+ */
+function add_project_form($link, $projects_name, $user_id) {
+    $sql = "
+            INSERT INTO projects (projects_name, user_id) VALUES (?, ?)";
+        $stmt = db_get_prepare_stmt($link, $sql,  [$projects_name, $user_id]);
+        mysqli_stmt_execute($stmt);
+}
 
+// ----- Фильтр задач на сегодня для данного пользователя -----
+/**
+ * @param $link Ресурс соединения
+ * @param $user int Идентификатор автора
+ * @return array
+ */
+function get_tasks_for_user_by_agenda($link, int $user)
+{
+    $sql = "
+            SELECT DISTINCT tasks. * , projects.projects_name AS project_name
+            FROM tasks
+            INNER JOIN projects ON tasks.projects_id = projects.projects_id
+            WHERE projects.user_id = ?
+              AND DATE(tasks.deadline) = CURDATE()";
+    $stmt = db_get_prepare_stmt($link, $sql, [$user]);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    $task_list = mysqli_fetch_all($res, MYSQLI_ASSOC);
+    return $task_list;
+}
+
+// ----- Фильтр задач на завтра для данного пользователя -----
+/**
+ * @param $link Ресурс соединения
+ * @param $user int Идентификатор автора
+ * @return array
+ */
+function get_tasks_for_user_by_tomorrow($link, int $user)
+{
+    $sql = "
+            SELECT DISTINCT tasks. * , projects.projects_name AS project_name
+            FROM tasks
+            INNER JOIN projects ON tasks.projects_id = projects.projects_id
+            WHERE projects.user_id = ?
+              AND DATE(tasks.deadline) = DATE_ADD(CURDATE(), INTERVAL 1 DAY)";
+    $stmt = db_get_prepare_stmt($link, $sql, [$user]);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    $task_list = mysqli_fetch_all($res, MYSQLI_ASSOC);
+    return $task_list;
+}
+
+// ----- Фильтр просроченных задач для данного пользователя -----
+/**
+ * @param $link Ресурс соединения
+ * @param $user int Идентификатор автора
+ * @return array
+ */
+function get_tasks_for_user_by_overdue($link, int $user)
+{
+    $sql = "
+            SELECT DISTINCT tasks. * , projects.projects_name AS project_name
+            FROM tasks
+            INNER JOIN projects ON tasks.projects_id = projects.projects_id
+            WHERE projects.user_id = ?
+              AND DATE(tasks.deadline) < NOW()";
+    $stmt = db_get_prepare_stmt($link, $sql, [$user]);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    $task_list = mysqli_fetch_all($res, MYSQLI_ASSOC);
+    return $task_list;
+}
+
+// ----- Фильтр всех задач для данного пользователя -----
+/**
+ * @param $link Ресурс соединения
+ * @param $user int Идентификатор автора
+ * @param $projects_id int ID проекта (по умолчанию нет)
+ * @param $filter Наличие фильтра (по умолчанию нет)
+ * @return array
+ */
+function get_tasks_for_user_filter($link, int $user, int $projects_id = null, $filter = null)
+{
+    if (!empty($projects_id)) {
+        return get_tasks_for_author_id_and_project($link, $user, $projects_id);
+    } else {
+        switch ($filter) {
+            case 'agenda' :
+                return get_tasks_for_user_by_agenda($link, (int)$user);
+            case 'tomorrow' :
+                return get_tasks_for_user_by_tomorrow($link, (int)$user);
+            case 'overdue' :
+                return get_tasks_for_user_by_overdue($link, (int)$user);
+            default :
+                return get_tasks_for_author_id($link, (int)$user);
+        }
+    }
+}
+
+// ----- Изменение статус задачи -----
+/**
+ * Изменяет статус задачи
+ * @param $link Ресурс соединения
+ * @param $task_id int ID задачи
+ * @param $check int Новый статус задачи
+ * @param $user_id int ID автора
+ * @return boolean
+ */
+function change_task_status($link, int $task_id, int $check, int $user_id)
+{
+    $sql = "
+            UPDATE tasks INNER JOIN projects ON projects.projects_id = tasks.projects_id
+            SET tasks.status = ? WHERE tasks.task_id = ? AND projects.user_id = ?";
+    $stmt = db_get_prepare_stmt($link, $sql, [$check, $task_id, $user_id]);
+    return mysqli_stmt_execute($stmt);
+}
 ?>

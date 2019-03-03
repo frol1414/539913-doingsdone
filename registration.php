@@ -9,9 +9,9 @@ if (!empty($_POST)) {
         $data[$key] = mysqli_real_escape_string($link, $_POST[$key]);
     }
     $required = ['email', 'password', 'name'];
-    // Обязательные поля
+// ----- Обязательные поля -----
     foreach ($required as $key) {
-        // Удаляет пробелы из начала и конца строки
+// -----Удаление пробелов в начале и конце -----
         if (!empty($data[$key])) {
             $data[$key] = trim($data[$key]);
         }
@@ -19,6 +19,7 @@ if (!empty($_POST)) {
             $errors[$key] = 'Это поле надо заполнить';
         }
     }
+
 // ----- Валидация полей -----
     if (empty($errors['name']) and strlen($data['name']) > 64) {
         $errors['name'] = 'Имя должно быть не длиннее 64 символов';
@@ -26,8 +27,8 @@ if (!empty($_POST)) {
 
 // ----- Валидация e-mail -----
     if (!empty($data['email'])) {
-        if (empty($errors['email']) and strlen($data['email']) > 128) {
-            $errors['email'] = 'E-mail не может быть длиннее 128 символов';
+        if (empty($errors['email']) and strlen($data['email']) > 64) {
+            $errors['email'] = 'E-mail не может быть длиннее 64 символов';
         }
         elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             $errors['email'] = 'E-mail введён некорректно';
@@ -41,17 +42,15 @@ if (!empty($_POST)) {
 
 // ----- Хеширование пароля -----
     if (!empty($data['password'])) {
-        if (empty($errors['password']) and strlen($data['password']) > 128) {
+        if (empty($errors['password']) and strlen($data['password']) > 64) {
             $errors['password'] = 'Пароль не может быть длиннее 64 символов';
         }
         $password = password_hash($data['password'], PASSWORD_DEFAULT);
     }
+
     if (empty($errors)) {
-        $sql_add_user = 'INSERT INTO user (registration_date, email, name, password) VALUES (NOW(), "' . $data['email'] . '", "' . $data['name'] . '", "' . $password . '")';
-        $add_user = mysqli_query($link, $sql_add_user);
-        if ($add_user) {
-            header("Location: /539913-doingsdone/index.php");
-        }
+        registration_user($link, $data['email'], $data['name'], $password);
+        header("Location: /539913-doingsdone/auth.php");
     }
 }
 $page_content = include_template('reg.php', [
