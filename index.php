@@ -18,13 +18,28 @@ if (isset($_GET['projects_id'])) {
         exit();
     }
 }
+// ----- Изменение статуса задачи -----
+if (isset($_GET['task_id']) && isset($_GET['check'])) {
+    if (!change_task_status($link, $_GET['task_id'], $_GET['check'], $user_id)) {
+        header("HTTP/1.0 404 Not Found");
+        exit();
+    } 
+}
+
+// ----- Показ выполненных задач -----
+$show_complete_tasks = 0;
+if (isset($_GET['show_completed'])) {
+   $show_complete_tasks = $_GET['show_completed'];
+}
+// ----- Фильтр задач -----
+$filter = isset($_GET['filter']) ? $_GET['filter'] : null;
 
 // ----- Подключение контента -----
-
 if (!empty($_SESSION['user'])) {
     $page_content = include_template('index.php', [
-        'task_list' => get_tasks_for_author_id_and_project($link, $user_id, $projects_id), 
-        'show_complete_tasks' => $show_complete_tasks
+    	'task_list' => get_tasks_for_user_filter($link, (int)$user_id, (int)$projects_id, $filter),
+        'show_complete_tasks' => $show_complete_tasks,
+        'filter' => $filter
     ]);
 
     $layout_content = include_template('layout.php', [

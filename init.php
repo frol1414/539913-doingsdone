@@ -6,7 +6,9 @@ ini_set('display_startup_errors', 1);
 require_once ('functions.php');
 require_once ('config/db.php');
 require_once ('mysql_helper.php');
+
 session_start();
+
 $title_main = 'Дела в порядке';
 $title_add_task = 'Добавление задачи';
 $title_auth = 'Аутентификация';
@@ -26,5 +28,4 @@ $user_id = !empty($user['user_id']) ? $user['user_id'] : '';
 
 $project_list = get_projects($link, $user_id);
 $task_list = get_tasks_for_author_id ($link, $user_id);
-
 ?>

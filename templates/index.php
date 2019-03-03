@@ -9,52 +9,42 @@
 
 <div class="tasks-controls">
     <nav class="tasks-switch">
-        <a href="/" class="tasks-switch__item tasks-switch__item--active">Все задачи</a>
-        <a href="/" class="tasks-switch__item">Повестка дня</a>
-        <a href="/" class="tasks-switch__item">Завтра</a>
-        <a href="/" class="tasks-switch__item">Просроченные</a>
+        <a href="/539913-doingsdone/index.php?filter=all"
+           class="tasks-switch__item <?= !isset($filter) || $filter === "all" ? "tasks-switch__item--active" : "" ?>">Все
+            задачи</a>
+        <a href="/539913-doingsdone/index.php?filter=agenda"
+           class="tasks-switch__item <?= $filter === "agenda" ? "tasks-switch__item--active" : "" ?>">Повестка дня</a>
+        <a href="/539913-doingsdone/index.php?filter=tomorrow"
+           class="tasks-switch__item <?= $filter === "tomorrow" ? "tasks-switch__item--active" : "" ?>">Завтра</a>
+        <a href="/539913-doingsdone/index.php?filter=overdue"
+           class="tasks-switch__item <?= $filter === "overdue" ? "tasks-switch__item--active" : "" ?>">Просроченные</a>
     </nav>
 
     <label class="checkbox">
-        <!--добавить сюда аттрибут "checked", если переменная $show_complete_tasks равна единице-->
-        <input class="checkbox__input visually-hidden show_completed" <?php if($show_complete_tasks == 1): ?> checked <?php endif;?> type="checkbox">
+        <input class="checkbox__input visually-hidden show_completed"
+               type="checkbox" <?= $show_complete_tasks ? "checked" : "" ?>>
         <span class="checkbox__text">Показывать выполненные</span>
     </label>
 </div>
-
 <table class="tasks">
-	<?php foreach ($task_list as $key_task_list => $value_task_list): ?>
-	<?php if (!$value_task_list['status'] || ($value_task_list['status'] && $show_complete_tasks)): ?>
-    <tr class="tasks__item task <?php if($value_task_list["status"]): ?> task--completed <?php endif;?>
-    <?php if(deadline($value_task_list["deadline"])): ?> task--important <?php endif;?>">
-        <td class="task__select">
-            <label class="checkbox task__checkbox">
-                <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
-                <span class="checkbox__text"><?=filter_info($value_task_list["name"]);?> </span>
-            </label>
-        </td>
+    <?php foreach ($task_list as $key): ?>
+        <?php if (!$key['status'] || $show_complete_tasks): ?>
+            <tr class="tasks__item task <?= $key['done'] ? "task--completed" : "" ?> <?= deadline($key['deadline']) && !$key['status'] ? "task--important" : "" ?>">
+                <td class="task__select">
+                    <label class="checkbox task__checkbox">
+                        <input class="checkbox__input visually-hidden task__checkbox" type="checkbox"
+                               value="<?= $key['task_id'] ?>"<?= ($key['status']) ? "checked" : "" ?>>
+                        <span class="checkbox__text"><?= filter_info($key['name']) ?></span>
+                    </label>
 
-        <td class="task__file">
-            <a class="download-link" href="#">Home.psd</a>
-        </td>
+                </td>
 
-        <td class="task__date"><?=$value_task_list["deadline"];?></td>
-    </tr>
-    <?php endif; ?>
-	<?php endforeach; ?>
-    <!--показывать следующий тег <tr/>, если переменная $show_complete_tasks равна единице-->
-    <?php if($show_complete_tasks == 1): ?>
-    <tr class="tasks__item task task--completed">
-		<td class="task__select">
-			<label class="checkbox task__checkbox">
-				<input class="checkbox__input visually-hidden" type="checkbox" checked>
-				<span class="checkbox__text">Записаться на интенсив "Базовый PHP"</span>
-			</label>
-		</td>
-		<td class="task__date">10.10.2019</td>
+                <td class="task__file">
+                    <a class="download-link" href="<?= 'uploads/' . $key['file']; ?>"></a>
+                </td>
 
-		<td class="task__controls">
-		</td>
-	</tr>
-	<?php endif;?>
+                <td class="task__date"><?= empty($key['deadline']) ? '' : date('d.m.Y', strtotime($key['deadline'])) ?></td>
+            </tr>
+        <?php endif ?>
+    <?php endforeach ?>
 </table>

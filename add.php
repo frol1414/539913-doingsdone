@@ -3,7 +3,6 @@ require_once ('functions.php');
 require_once ('init.php');
 require_once ('mysql_helper.php');
 
-
 $task = [];
 $errors = [];
 // ----- Валидация -----
@@ -19,8 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 // ----- Проверка полей -----
-    if (empty($errors['name']) and strlen($task['name']) > 128) {
-        $errors['name'] = 'Название не может быть длиннее 128 символов';
+    if (empty($errors['name']) and strlen($task['name']) > 64) {
+        $errors['name'] = 'Название не может быть длиннее 64 символов';
     }
     $task_name = $task['name'];
     $project_name = $task['project'];
@@ -32,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $errors['date'] = 'Дата не может быть раньше текущей';
     }
     else {
-        $deadline = $task['date'];
+        $deadline = '"' . $task['date'] . '"';
     }
 // ----- Загрузка файла -----
     if (is_uploaded_file($_FILES['preview']['tmp_name'])) {
