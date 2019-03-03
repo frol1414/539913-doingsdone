@@ -37,7 +37,7 @@ $filter = isset($_GET['filter']) ? $_GET['filter'] : null;
 // ----- Поиск -----
 $search = isset($_GET['search']) ? $_GET['search'] : null;
 
-// ----- Подключение контента -----
+// ----- Подключение разного контента при наличии/отсутствия сессии-----
 if (!empty($_SESSION['user'])) {
     $page_content = include_template('index.php', [
     	'task_list' => get_tasks_for_user_filter($link, (int)$user_id, (int)$projects_id, $filter, $search),

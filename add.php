@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $file = 'null';
     }
     if (empty($errors)) {
-        $result = add_task_form($link, $task_name, $file, $deadline, $user_id, $project_name);
+        add_task_form($link, $task_name, $file, $deadline, $user_id, $project_name);
         header("Location: /539913-doingsdone/index.php");
     }
 }
