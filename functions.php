@@ -140,10 +140,10 @@ function registration_user($link, $email, $name, $password) {
  * @param $project_name Имя проекта
  * @return boolean
  */
-function add_task_form($link, $task_name, $file, $deadline, int $user, $project_name) {
-    $sql = "
+function add_task_form($link, $task_name, $file, $deadline, $user, $project_name) {
+    $sql = '
             INSERT INTO tasks (creation_date, execution_date, status, name, file, deadline, user_id, projects_id)
-            VALUES (NOW(), NULL, 0, ?, ?, ' . $deadline . ', ?, ?)";
+            VALUES (NOW(), NULL, 0, ?, ?, ' . $deadline . ', ?, ?)';
         $stmt = db_get_prepare_stmt($link, $sql,  [$task_name, $file, $user, $project_name]);
         mysqli_stmt_execute($stmt);
 }
@@ -225,18 +225,48 @@ function get_tasks_for_user_by_overdue($link, int $user)
     return $task_list;
 }
 
+function searchTaskAuthor($con, $search, int $userId) {
+    $sql = "SELECT tasks.*, projects.name AS project_name FROM tasks
+            JOIN projects ON projects.id = tasks.project_id
+            WHERE MATCH(tasks.name) AGAINST(?) AND projects.author_id = ?";
+    $stmt = db_get_prepare_stmt($con, $sql, [$search, $userId]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+// ----- Поиск -----
+/**
+ * @param $link Ресурс соединения
+ * @param $search Параметр поиска
+ * @param $user_id int ID автора
+ * @return array
+ */
+function searh_task($link, $search, int $user_id) {
+    $sql = "SELECT tasks.*, projects.projects_name AS project_name FROM tasks
+            JOIN projects ON projects.projects_id = tasks.projects_id
+            WHERE MATCH(tasks.name) AGAINST(?) AND projects.user_id = ?";
+    $stmt = db_get_prepare_stmt($link, $sql, [$search, $user_id]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
 // ----- Фильтр всех задач для данного пользователя -----
 /**
  * @param $link Ресурс соединения
  * @param $user int Идентификатор автора
  * @param $projects_id int ID проекта (по умолчанию нет)
  * @param $filter Наличие фильтра (по умолчанию нет)
+ * @param $search Наличие поиска (по умолчанию нет)
  * @return array
  */
-function get_tasks_for_user_filter($link, int $user, int $projects_id = null, $filter = null)
+function get_tasks_for_user_filter($link, int $user, int $projects_id = null, $filter = null, $search = null)
 {
     if (!empty($projects_id)) {
         return get_tasks_for_author_id_and_project($link, $user, $projects_id);
+    } elseif (!empty($search)) {
+        return searh_task($link, $search, (int) $user);   
     } else {
         switch ($filter) {
             case 'agenda' :
@@ -253,7 +283,6 @@ function get_tasks_for_user_filter($link, int $user, int $projects_id = null, $f
 
 // ----- Изменение статус задачи -----
 /**
- * Изменяет статус задачи
  * @param $link Ресурс соединения
  * @param $task_id int ID задачи
  * @param $check int Новый статус задачи

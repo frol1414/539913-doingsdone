@@ -34,12 +34,16 @@ if (isset($_GET['show_completed'])) {
 // ----- Фильтр задач -----
 $filter = isset($_GET['filter']) ? $_GET['filter'] : null;
 
+// ----- Поиск -----
+$search = isset($_GET['search']) ? $_GET['search'] : null;
+
 // ----- Подключение контента -----
 if (!empty($_SESSION['user'])) {
     $page_content = include_template('index.php', [
-    	'task_list' => get_tasks_for_user_filter($link, (int)$user_id, (int)$projects_id, $filter),
+    	'task_list' => get_tasks_for_user_filter($link, (int)$user_id, (int)$projects_id, $filter, $search),
         'show_complete_tasks' => $show_complete_tasks,
-        'filter' => $filter
+        'filter' => $filter,
+        'search' => $search
     ]);
 
     $layout_content = include_template('layout.php', [
