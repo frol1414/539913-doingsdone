@@ -6,7 +6,9 @@
 
     <input class="search-form__submit" type="submit" name="" value="Искать">
 </form>
-
+<?php if(!empty($search)): ?>
+    <p>По вашему запросу ничего не найдено</p>
+<?php endif; ?>
 <div class="tasks-controls">
     <nav class="tasks-switch">
         <a href="/539913-doingsdone/index.php?filter=all"

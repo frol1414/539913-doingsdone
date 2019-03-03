@@ -38,6 +38,7 @@ if (!empty($_POST)) {
         if ($user === null) {
             $errors['email'] = 'Такой пользователь не найден';
         }
+// ----- Валидация пароля -----
         elseif (password_verify($data['password'], $user['password'])) {
             $_SESSION['user'] = $user;
             header("Location: /539913-doingsdone/index.php");
@@ -60,20 +61,5 @@ $layout_content = include_template('layout.php', [
     'project_list' => '',
 ]);
 
-print($layout_content);
-
-
-
-
-$page_content = include_template('auth.php', [
-    'data' => $data,
-    'errors' => $errors
-]);
-$layout_content = include_template('layout.php', [
-    'content' => $page_content,
-    'title' => 'Вход на сайт',
-    'task_list' => $task_list,
-    'project_list' => $project_list
-]);
 print($layout_content);
 ?>

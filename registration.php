@@ -19,7 +19,6 @@ if (!empty($_POST)) {
             $errors[$key] = 'Это поле надо заполнить';
         }
     }
-
 // ----- Валидация полей -----
     if (empty($errors['name']) and strlen($data['name']) > 64) {
         $errors['name'] = 'Имя должно быть не длиннее 64 символов';
@@ -39,7 +38,6 @@ if (!empty($_POST)) {
             $errors['email'] = 'Пользователь с этим email уже зарегистрирован';
         }
     }
-
 // ----- Хеширование пароля -----
     if (!empty($data['password'])) {
         if (empty($errors['password']) and strlen($data['password']) > 64) {
@@ -53,6 +51,7 @@ if (!empty($_POST)) {
         header("Location: /539913-doingsdone/auth.php");
     }
 }
+// ----- Подключение контента -----
 $page_content = include_template('reg.php', [
     'data' => $data,
     'errors' => $errors

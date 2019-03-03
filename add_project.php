@@ -3,8 +3,8 @@ require_once ('functions.php');
 require_once ('init.php');
 require_once ('mysql_helper.php');
 
-
-if (!$user){
+// ----- При отсутствии пользователя - переход на начальную страницу -----
+if (!$user) {
     header("Location: /539913-doingsdone/");
     exit();
 }
@@ -15,7 +15,7 @@ if (!empty($_POST)) {
     $required = ['name'];
 // ----- Обязаьтельные поля -----
     foreach ($required as $key) {
-        if (!empty($_POST[$key])){
+        if (!empty($_POST[$key])) {
 // ----- Экранирование спецсимволов -----
             $data[$key] = trim(mysqli_real_escape_string($link, $_POST[$key]));
         }
@@ -41,6 +41,7 @@ if (!empty($_POST)) {
         header("Location: /539913-doingsdone/index.php");
     }
 }
+// ----- Подключение контента -----
 $page_content = include_template('add_project.php', [
     'data' => $data,
     'errors' => $errors,

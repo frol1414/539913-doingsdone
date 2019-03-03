@@ -11,9 +11,7 @@ function include_template($name, $data) {
     ob_start();
     extract($data);
     require $name;
-
     $result = ob_get_clean();
-
     return $result;
 }
 
@@ -223,16 +221,6 @@ function get_tasks_for_user_by_overdue($link, int $user)
     $res = mysqli_stmt_get_result($stmt);
     $task_list = mysqli_fetch_all($res, MYSQLI_ASSOC);
     return $task_list;
-}
-
-function searchTaskAuthor($con, $search, int $userId) {
-    $sql = "SELECT tasks.*, projects.name AS project_name FROM tasks
-            JOIN projects ON projects.id = tasks.project_id
-            WHERE MATCH(tasks.name) AGAINST(?) AND projects.author_id = ?";
-    $stmt = db_get_prepare_stmt($con, $sql, [$search, $userId]);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
 // ----- Поиск -----
