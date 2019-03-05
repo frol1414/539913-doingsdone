@@ -10,28 +10,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!empty($_POST)) {
         $task = $_POST;
     }
-    $required = ['name', 'project'];
-// ----- Обязаьтельные поля -----
-    foreach ($required as $key) {
-        if (empty($_POST[$key])) {
-            $errors[$key] = 'Это поле надо заполнить';
-        }
+
+
+// ----- Обязательное поле -----
+    if (empty($task['name'])) {
+        $errors['name'] = 'Это поле надо заполнить';
     }
 // ----- Проверка полей -----
     if (empty($errors['name']) and strlen($task['name']) > 64) {
         $errors['name'] = 'Название не может быть длиннее 64 символов';
     }
     $task_name = $task['name'];
-    $project_name = $task['project'];
+
+    $project_name = 'null';
+        if (!empty($task['project'])) {
+            $project_name = $task['project'];
+        }
 // ----- Валидация даты -----
     if (empty($task['date'])) {
         $deadline = 'null';
     }
-    elseif (empty($errors['date']) and strtotime($task['date']) < time()) {
+    elseif (empty($errors['date']) and strtotime($task['date']) < strtotime(date('d-m-Y'))) {
         $errors['date'] = 'Дата не может быть раньше текущей';
     }
     else {
-        $deadline = '"' . $task['date'] . '"';
+        $date = $task['date'];
+        $deadline = date('Y-m-d', strtotime($date));
+        //$deadline = date('Y-m-d', strtotime($date));
+        //var_dump($date);
+        //var_dump($deadline);
     }
 // ----- Загрузка файла -----
     if (is_uploaded_file($_FILES['preview']['tmp_name'])) {
@@ -45,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     if (empty($errors)) {
         add_task_form($link, $task_name, $file, $deadline, $user_id, $project_name);
-        header("Location: /539913-doingsdone/index.php");
+        header("Location: /index.php");
     }
 }
 

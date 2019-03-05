@@ -15,6 +15,7 @@
             <select class="form__input form__input--select" name="project" id="project">
               <?php foreach ($project_list as $project): ?>
                 <option <?= $project['projects_id'] == $value ? 'selected' : '' ?> value="<?= filter_info($project['projects_id']) ?>"><?= filter_info($project['projects_name']) ?></option>
+
               <?php endforeach ?>
             </select>
             <?php if (isset($errors['project'])): ?>

@@ -29,11 +29,12 @@ if (!empty($_POST)) {
         if (empty($errors['email']) and strlen($data['email']) > 64) {
             $errors['email'] = 'E-mail не может быть длиннее 64 символов';
         }
-        elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+
+        if (empty($errors['email']) and (!filter_var($data['email'], FILTER_VALIDATE_EMAIL))) {
             $errors['email'] = 'E-mail введён некорректно';
         }
-        $sql = 'SELECT user_id FROM user WHERE email = "' . $data['email'] . '"';
-        $res = mysqli_query($link, $sql);
+
+        $res = get_user_by_email($link, $data['email']);
         if (mysqli_num_rows($res) > 0) {
             $errors['email'] = 'Пользователь с этим email уже зарегистрирован';
         }
@@ -48,7 +49,7 @@ if (!empty($_POST)) {
 
     if (empty($errors)) {
         registration_user($link, $data['email'], $data['name'], $password);
-        header("Location: /539913-doingsdone/auth.php");
+        header("Location: /auth.php");
     }
 }
 // ----- Подключение контента -----

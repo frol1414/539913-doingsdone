@@ -4,7 +4,7 @@ require_once('init.php');
 require_once ('mysql_helper.php');
 
 if ($user){
-    header("Location: /539913-doingsdone/index.php");
+    header("Location: /index.php");
     exit();
 }
 $data = [];
@@ -29,9 +29,7 @@ if (!empty($_POST)) {
         $errors['email'] = 'E-mail введён некорректно';
     }
     if (empty($errors)) {
-        $email = $data['email'];
-        $sql = 'SELECT * FROM user WHERE email = "' . $email . '"';
-        $res = mysqli_query($link, $sql);
+        $res = get_user_by_email($link, $data['email']);
 
         $user = $res ? mysqli_fetch_array($res, MYSQLI_ASSOC) : null;
 
@@ -41,7 +39,7 @@ if (!empty($_POST)) {
 // ----- Валидация пароля -----
         elseif (password_verify($data['password'], $user['password'])) {
             $_SESSION['user'] = $user;
-            header("Location: /539913-doingsdone/index.php");
+            header("Location: /index.php");
                exit();
         }
         else {

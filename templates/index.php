@@ -11,14 +11,14 @@
 <?php endif; ?>
 <div class="tasks-controls">
     <nav class="tasks-switch">
-        <a href="/539913-doingsdone/index.php?filter=all"
+        <a href="/index.php?filter=all"
            class="tasks-switch__item <?= !isset($filter) || $filter === "all" ? "tasks-switch__item--active" : "" ?>">Все
             задачи</a>
-        <a href="/539913-doingsdone/index.php?filter=agenda"
+        <a href="/index.php?filter=agenda"
            class="tasks-switch__item <?= $filter === "agenda" ? "tasks-switch__item--active" : "" ?>">Повестка дня</a>
-        <a href="/539913-doingsdone/index.php?filter=tomorrow"
+        <a href="/index.php?filter=tomorrow"
            class="tasks-switch__item <?= $filter === "tomorrow" ? "tasks-switch__item--active" : "" ?>">Завтра</a>
-        <a href="/539913-doingsdone/index.php?filter=overdue"
+        <a href="/index.php?filter=overdue"
            class="tasks-switch__item <?= $filter === "overdue" ? "tasks-switch__item--active" : "" ?>">Просроченные</a>
     </nav>
 

@@ -46,9 +46,9 @@ function deadline($value) {
 
 // ----- Функция вызова задач для одного автора -----
 /**
- * @param $link  Ресурс соединения
- * @param $user Идентификатор автора
- * @return array
+ * @param $link mysqli Ресурс соединения
+ * @param $user int Идентификатор автора
+ * @return mysqli_stmt Подготовленное выражение
  */
 function get_projects($link, $user) {
     $sql = "SELECT * FROM projects WHERE user_id = ?";
@@ -61,9 +61,9 @@ function get_projects($link, $user) {
 
 // ----- Функция вызова имен категорий для одного автора -----
 /**
- * @param $link  Ресурс соединения
- * @param $user Идентификатор автора
- * @return array
+ * @param $link mysqli Ресурс соединения
+ * @param $user int Идентификатор автора
+ * @return mysqli_stmt Подготовленное выражение
  */
 function get_tasks_for_author_id ($link, $user) {
     $sql = "SELECT * FROM tasks WHERE user_id = ?";
@@ -76,10 +76,10 @@ function get_tasks_for_author_id ($link, $user) {
 
 // ----- Функция вызова задач для одного проекта -----
 /**
- * @param $link  Ресурс соединения
- * @param $user Идентификатор автора
- * @param $projects_id ID проекта (по умолчанию нет)
- * @return array
+ * @param $link mysqli Ресурс соединения
+ * @param $user int Идентификатор автора
+ * @param $projects_id int ID проекта (по умолчанию нет)
+ * @return mysqli_stmt Подготовленное выражение
  */
 function get_tasks_for_author_id_and_project($link, $user, $projects_id = null) {
     if(!empty($projects_id)) {
@@ -103,7 +103,7 @@ function get_tasks_for_author_id_and_project($link, $user, $projects_id = null) 
     return $task_list;
 }
 
-function none_id($projects_id, $project_list) {
+function none_id(int $projects_id, $project_list) {
     foreach($project_list as $list_info) {
         if ($projects_id == $list_info['projects_id']) {
             return true;
@@ -114,11 +114,11 @@ function none_id($projects_id, $project_list) {
 
 // ----- Регистрация пользователя -----
 /**
- * @param $link Ресурс соединения
- * @param $email Email пользователя
- * @param $name Имя пользователя
- * @param $password Пароль пользователя
- * @return boolean
+ * @param $link mysqli Ресурс соединения
+ * @param $email string Email пользователя
+ * @param $name string Имя пользователя
+ * @param $password string Пароль пользователя
+ * @return mysqli_stmt boolean
  */
 function registration_user($link, $email, $name, $password) {
     $sql = "
@@ -130,15 +130,15 @@ function registration_user($link, $email, $name, $password) {
 
 // ----- Добавление задач в БД -----
 /**
- * @param $link Ресурс соединения
- * @param $task_name Имя задачи
+ * @param $link mysqli Ресурс соединения
+ * @param $task_name string Имя задачи
  * @param $file Файл
  * @param $deadline Дедлайн задачи
  * @param $user int Идентификатор автора
  * @param $project_name Имя проекта
- * @return boolean
+ * @return mysqli_stmt boolean
  */
-function add_task_form($link, $task_name, $file, $deadline, $user, $project_name) {
+function add_task_form($link, $task_name, $file, $deadline, $user, $project_name = null) {
     $sql = '
             INSERT INTO tasks (creation_date, execution_date, status, name, file, deadline, user_id, projects_id)
             VALUES (NOW(), NULL, 0, ?, ?, ' . $deadline . ', ?, ?)';
@@ -148,10 +148,10 @@ function add_task_form($link, $task_name, $file, $deadline, $user, $project_name
 
 // ----- Добавление проекта в БД -----
 /**
- * @param $link Ресурс соединения
- * @param $user_id ID автора
+ * @param $link mysqli Ресурс соединения
+ * @param $user_id int ID автора
  * @param $project_name Имя проекта
- * @return boolean
+ * @return mysqli_stmt boolean
  */
 function add_project_form($link, $projects_name, $user_id) {
     $sql = "
@@ -162,9 +162,9 @@ function add_project_form($link, $projects_name, $user_id) {
 
 // ----- Фильтр задач на сегодня для данного пользователя -----
 /**
- * @param $link Ресурс соединения
+ * @param $link mysqli Ресурс соединения
  * @param $user int Идентификатор автора
- * @return array
+ * @return mysqli_stmt Подготовленное выражение
  */
 function get_tasks_for_user_by_agenda($link, int $user)
 {
@@ -183,9 +183,9 @@ function get_tasks_for_user_by_agenda($link, int $user)
 
 // ----- Фильтр задач на завтра для данного пользователя -----
 /**
- * @param $link Ресурс соединения
+ * @param $link mysqli Ресурс соединения
  * @param $user int Идентификатор автора
- * @return array
+ * @return mysqli_stmt Подготовленное выражение
  */
 function get_tasks_for_user_by_tomorrow($link, int $user)
 {
@@ -204,9 +204,9 @@ function get_tasks_for_user_by_tomorrow($link, int $user)
 
 // ----- Фильтр просроченных задач для данного пользователя -----
 /**
- * @param $link Ресурс соединения
+ * @param $link mysqli Ресурс соединения
  * @param $user int Идентификатор автора
- * @return array
+ * @return mysqli_stmt Подготовленное выражение
  */
 function get_tasks_for_user_by_overdue($link, int $user)
 {
@@ -225,10 +225,10 @@ function get_tasks_for_user_by_overdue($link, int $user)
 
 // ----- Поиск -----
 /**
- * @param $link Ресурс соединения
- * @param $search Параметр поиска
+ * @param $link mysqli Ресурс соединения
+ * @param $search string Параметр поиска
  * @param $user_id int ID автора
- * @return array
+ * @return mysqli_stmt Подготовленное выражение
  */
 function searh_task($link, $search, int $user_id) {
     $sql = "SELECT tasks.*, projects.projects_name AS project_name FROM tasks
@@ -242,7 +242,7 @@ function searh_task($link, $search, int $user_id) {
 
 // ----- Фильтр всех задач для данного пользователя -----
 /**
- * @param $link Ресурс соединения
+ * @param $link mysqli Ресурс соединения
  * @param $user int Идентификатор автора
  * @param $projects_id int ID проекта (по умолчанию нет)
  * @param $filter Наличие фильтра (по умолчанию нет)
@@ -271,7 +271,7 @@ function get_tasks_for_user_filter($link, int $user, int $projects_id = null, $f
 
 // ----- Изменение статус задачи -----
 /**
- * @param $link Ресурс соединения
+ * @param $link mysqli Ресурс соединения
  * @param $task_id int ID задачи
  * @param $check int Новый статус задачи
  * @param $user_id int ID автора
@@ -285,4 +285,18 @@ function change_task_status($link, int $task_id, int $check, int $user_id)
     $stmt = db_get_prepare_stmt($link, $sql, [$check, $task_id, $user_id]);
     return mysqli_stmt_execute($stmt);
 }
+
+// ----- Проверяет email пользователя -----
+/**
+ * @param $link mysqli Ресурс соединения
+ * @param $email string Адрес пользователя
+ * @return boolean
+ */
+function get_user_by_email($link, $email)
+{
+    $email = mysqli_real_escape_string($link, $email);
+    $sql = 'SELECT * FROM user WHERE email = "' . $email . '"';
+    return mysqli_query($link, $sql);
+}
+
 ?>
