@@ -38,7 +38,7 @@ function deadline($value) {
 	$date_st = strtotime($value);
     $end_time = $date_st - time();
     $value_date = ($end_time <= 86400)? true : false;
-    if($value === ''){
+    if($value === null){
         $value_date = false;
     }
     return $value_date;
@@ -141,8 +141,8 @@ function registration_user($link, $email, $name, $password) {
 function add_task_form($link, $task_name, $file, $deadline, $user, $project_name = null) {
     $sql = '
             INSERT INTO tasks (creation_date, execution_date, status, name, file, deadline, user_id, projects_id)
-            VALUES (NOW(), NULL, 0, ?, ?, ' . $deadline . ', ?, ?)';
-        $stmt = db_get_prepare_stmt($link, $sql,  [$task_name, $file, $user, $project_name]);
+            VALUES (NOW(), NULL, 0, ?, ?,  ?, ?, ?)';
+        $stmt = db_get_prepare_stmt($link, $sql,  [$task_name, $file, $deadline, $user, $project_name]);
         mysqli_stmt_execute($stmt);
 }
 
@@ -215,7 +215,7 @@ function get_tasks_for_user_by_overdue($link, int $user)
             FROM tasks
             INNER JOIN projects ON tasks.projects_id = projects.projects_id
             WHERE projects.user_id = ?
-              AND DATE(tasks.deadline) < NOW()";
+              AND DATE(tasks.deadline) < CURDATE()";
     $stmt = db_get_prepare_stmt($link, $sql, [$user]);
     mysqli_stmt_execute($stmt);
     $res = mysqli_stmt_get_result($stmt);

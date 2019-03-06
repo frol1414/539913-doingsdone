@@ -13,6 +13,7 @@
     <label class="form__label" for="project">Проект</label>
       <?php $classname = isset($errors['project']) ? "form__input--error" : ""; $value = isset($task['project']) ? $task['project'] : ""?>
             <select class="form__input form__input--select" name="project" id="project">
+              <option value="Без проекта"></option>
               <?php foreach ($project_list as $project): ?>
                 <option <?= $project['projects_id'] == $value ? 'selected' : '' ?> value="<?= filter_info($project['projects_id']) ?>"><?= filter_info($project['projects_name']) ?></option>
 

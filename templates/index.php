@@ -31,7 +31,8 @@
 <table class="tasks">
     <?php foreach ($task_list as $key): ?>
         <?php if (!$key['status'] || $show_complete_tasks): ?>
-            <tr class="tasks__item task <?= $key['done'] ? "task--completed" : "" ?> <?= deadline($key['deadline']) && !$key['status'] ? "task--important" : "" ?>">
+            <tr class="tasks__item task <?= $key['status'] ? "task--completed" : "" ?> <?= deadline($key['deadline']) ? "task--important" : "" ?>">
+
                 <td class="task__select">
                     <label class="checkbox task__checkbox">
                         <input class="checkbox__input visually-hidden task__checkbox" type="checkbox"
@@ -42,10 +43,12 @@
                 </td>
 
                 <td class="task__file">
+                    <?php if (isset($key['file'])) :?>
                     <a class="download-link" href="<?= 'uploads/' . $key['file']; ?>"></a>
+                <?php endif;?>
                 </td>
 
-                <td class="task__date"><?= empty($key['deadline']) ? '' : date('d.m.Y', strtotime($key['deadline'])) ?></td>
+                <td class="task__date"><?= empty($key['deadline']) ? '' : $key['deadline'];?></td>
             </tr>
         <?php endif ?>
     <?php endforeach ?>

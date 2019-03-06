@@ -31,16 +31,7 @@ if (!empty($_POST)) {
             $errors[$key] = 'Название не может быть длиннее 64 символов';
         }
     }
-// ----- Проверка на существование такого же проекта -----
-    /*if (empty($errors)) {
-        $sql = "SELECT * FROM projects WHERE user_id = '?' AND projects_name = '?'";
-        $stmt = db_get_prepare_stmt($link, $sql, [$user_id, $data['name']]);
-        $result = mysqli_stmt_execute($stmt);
 
-        if (mysqli_num_rows($result) > 0) {
-            $errors['name'] = 'Такой проект уже существует';
-        }
-    }*/
 // ----- Добавляем проект, если нет ошибок -----
     if (empty($errors)) {
         add_project_form($link, $data['name'], $user_id);

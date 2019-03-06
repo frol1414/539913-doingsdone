@@ -22,13 +22,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     $task_name = $task['name'];
 
-    $project_name = 'null';
+    $project_name = null;
         if (!empty($task['project'])) {
             $project_name = $task['project'];
         }
 // ----- Валидация даты -----
     if (empty($task['date'])) {
-        $deadline = 'null';
+        $deadline = null;
     }
     elseif (empty($errors['date']) and strtotime($task['date']) < strtotime(date('d-m-Y'))) {
         $errors['date'] = 'Дата не может быть раньше текущей';
@@ -36,9 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     else {
         $date = $task['date'];
         $deadline = date('Y-m-d', strtotime($date));
-        //$deadline = date('Y-m-d', strtotime($date));
-        //var_dump($date);
-        //var_dump($deadline);
     }
 // ----- Загрузка файла -----
     if (is_uploaded_file($_FILES['preview']['tmp_name'])) {
@@ -48,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $file = $path;
     }
     else {
-        $file = 'null';
+        $file = null;
     }
     if (empty($errors)) {
         add_task_form($link, $task_name, $file, $deadline, $user_id, $project_name);

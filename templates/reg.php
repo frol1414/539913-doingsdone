@@ -17,7 +17,7 @@
             <div class="form__row">
               <label class="form__label" for="name">Имя <sup>*</sup></label>
 
-              <input class="form__input <?= !empty($errors['name']) ? "form__input--error" : ""?>" type="password" name="name" id="name" value="<?= !empty($data['name']) ? filter_info($data['name']) : ""?>" placeholder="Введите имя">
+              <input class="form__input <?= !empty($errors['name']) ? "form__input--error" : ""?>" type="text" name="name" id="name" value="<?= !empty($data['name']) ? filter_info($data['name']) : ""?>" placeholder="Введите имя">
               <p class="form__message"><?= !empty($errors['name']) ? $errors['name'] : ""?></p>
             </div>
 
