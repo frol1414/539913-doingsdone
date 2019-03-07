@@ -5,7 +5,7 @@ require_once ('mysql_helper.php');
 
 // ----- При отсутствии пользователя - переход на начальную страницу -----
 if (!$user) {
-    header("Location: /");
+    header('HTTP/1.0 403 Forbidden');
     exit();
 }
 $data = [];
@@ -27,7 +27,7 @@ if (!empty($_POST)) {
             $errors[$key] = 'Такой проект уже существует';
         }
 
-        if (empty($errors[$key]) and strlen($data[$key]) > 64) {
+        if (empty($errors[$key]) and strlen($data[$key]) > 128) {
             $errors[$key] = 'Название не может быть длиннее 64 символов';
         }
     }

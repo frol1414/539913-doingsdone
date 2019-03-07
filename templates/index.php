@@ -48,7 +48,7 @@
                 <?php endif;?>
                 </td>
 
-                <td class="task__date"><?= empty($key['deadline']) ? '' : $key['deadline'];?></td>
+                <td class="task__date"><?= empty($key['deadline']) ? '' : change_format_deadline($key['deadline']);?></td>
             </tr>
         <?php endif ?>
     <?php endforeach ?>

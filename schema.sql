@@ -23,11 +23,11 @@ CREATE TABLE `tasks` (
   	`creation_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   	`execution_date` DATETIME,
   	`status` INT DEFAULT '0',
-  	`name` VARCHAR(128) NOT NULL,
+  	`name` VARCHAR(128),
   	`file` VARCHAR(128),
   	`deadline` DATETIME,
   	`user_id` INT NOT NULL,
-  	`projects_id` INT NOT NULL
+  	`projects_id` INT
 );
 
 CREATE FULLTEXT INDEX task_search ON tasks(name)

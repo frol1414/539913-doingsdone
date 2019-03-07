@@ -3,6 +3,11 @@ require_once ('functions.php');
 require_once ('init.php');
 require_once ('mysql_helper.php');
 
+if (!$user) {
+    header('HTTP/1.0 403 Forbidden');
+    exit();
+}
+
 $task = [];
 $errors = [];
 // ----- Валидация -----

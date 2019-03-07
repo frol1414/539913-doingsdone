@@ -29,7 +29,7 @@ function count_tasks($array, $name)
 
 // ----- Фильтр от XSS -----
 function filter_info($str) {
-    $text = htmlspecialchars($str);
+    $text = htmlentities($str);
     return $text;
 }
 
@@ -297,6 +297,20 @@ function get_user_by_email($link, $email)
     $email = mysqli_real_escape_string($link, $email);
     $sql = 'SELECT * FROM user WHERE email = "' . $email . '"';
     return mysqli_query($link, $sql);
+}
+
+// ----- Возврат даты в формате Д.М.Г. -----
+/**
+ * @param $value NULL/string Дата выполнения задачи
+ * @return $dt_format string Дата в формате Д.М.Г
+ */
+function change_format_deadline($value) {
+    if ($value === NULL) {
+        return null;
+    }
+    $date = date_create($value);
+    $dt_format = date_format($date, 'd.m.Y');
+    return $dt_format;
 }
 
 ?>
