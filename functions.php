@@ -169,11 +169,7 @@ function add_project_form($link, $projects_name, $user_id) {
 function get_tasks_for_user_by_agenda($link, int $user)
 {
     $sql = "
-            SELECT DISTINCT tasks. * , projects.projects_name AS project_name
-            FROM tasks
-            INNER JOIN projects ON tasks.projects_id = projects.projects_id
-            WHERE projects.user_id = ?
-              AND DATE(tasks.deadline) = CURDATE()";
+            SELECT * FROM tasks WHERE user_id = ? AND DATE(tasks.deadline) = CURDATE()";
     $stmt = db_get_prepare_stmt($link, $sql, [$user]);
     mysqli_stmt_execute($stmt);
     $res = mysqli_stmt_get_result($stmt);
@@ -187,14 +183,11 @@ function get_tasks_for_user_by_agenda($link, int $user)
  * @param $user int Идентификатор автора
  * @return mysqli_stmt Подготовленное выражение
  */
+
 function get_tasks_for_user_by_tomorrow($link, int $user)
 {
     $sql = "
-            SELECT DISTINCT tasks. * , projects.projects_name AS project_name
-            FROM tasks
-            INNER JOIN projects ON tasks.projects_id = projects.projects_id
-            WHERE projects.user_id = ?
-              AND DATE(tasks.deadline) = DATE_ADD(CURDATE(), INTERVAL 1 DAY)";
+            SELECT * FROM tasks WHERE user_id = ? AND DATE(tasks.deadline) = DATE_ADD(CURDATE(), INTERVAL 1 DAY)";
     $stmt = db_get_prepare_stmt($link, $sql, [$user]);
     mysqli_stmt_execute($stmt);
     $res = mysqli_stmt_get_result($stmt);
@@ -211,11 +204,7 @@ function get_tasks_for_user_by_tomorrow($link, int $user)
 function get_tasks_for_user_by_overdue($link, int $user)
 {
     $sql = "
-            SELECT DISTINCT tasks. * , projects.projects_name AS project_name
-            FROM tasks
-            INNER JOIN projects ON tasks.projects_id = projects.projects_id
-            WHERE projects.user_id = ?
-              AND DATE(tasks.deadline) < CURDATE()";
+            SELECT * FROM tasks WHERE user_id = ? AND DATE(tasks.deadline) < CURDATE()";
     $stmt = db_get_prepare_stmt($link, $sql, [$user]);
     mysqli_stmt_execute($stmt);
     $res = mysqli_stmt_get_result($stmt);
@@ -254,7 +243,7 @@ function get_tasks_for_user_filter($link, int $user, int $projects_id = null, $f
     if (!empty($projects_id)) {
         return get_tasks_for_author_id_and_project($link, $user, $projects_id);
     } elseif (!empty($search)) {
-        return searh_task($link, $search, (int) $user);   
+        return searh_task($link, $search, (int) $user);  
     } else {
         switch ($filter) {
             case 'agenda' :
@@ -277,11 +266,20 @@ function get_tasks_for_user_filter($link, int $user, int $projects_id = null, $f
  * @param $user_id int ID автора
  * @return boolean
  */
-function change_task_status($link, int $task_id, int $check, int $user_id)
+/*function change_task_status($link, int $task_id, int $check, int $user_id)
 {
     $sql = "
             UPDATE tasks INNER JOIN projects ON projects.projects_id = tasks.projects_id
             SET tasks.status = ? WHERE tasks.task_id = ? AND projects.user_id = ?";
+    $stmt = db_get_prepare_stmt($link, $sql, [$check, $task_id, $user_id]);
+    return mysqli_stmt_execute($stmt);
+}*/
+
+function change_task_status($link, int $task_id, int $check, int $user_id)
+{
+    $sql = "
+            UPDATE tasks 
+            SET status = ? WHERE task_id = ? AND user_id = ?";
     $stmt = db_get_prepare_stmt($link, $sql, [$check, $task_id, $user_id]);
     return mysqli_stmt_execute($stmt);
 }
