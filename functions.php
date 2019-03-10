@@ -220,9 +220,8 @@ function get_tasks_for_user_by_overdue($link, int $user)
  * @return mysqli_stmt Подготовленное выражение
  */
 function searh_task($link, $search, int $user_id) {
-    $sql = "SELECT tasks.*, projects.projects_name AS project_name FROM tasks
-            JOIN projects ON projects.projects_id = tasks.projects_id
-            WHERE MATCH(tasks.name) AGAINST(?) AND projects.user_id = ?";
+    $sql = "SELECT * FROM tasks WHERE MATCH(name) AGAINST(?) AND user_id = ?";
+
     $stmt = db_get_prepare_stmt($link, $sql, [$search, $user_id]);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
