@@ -45,13 +45,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 // ----- Загрузка файла -----
     if (is_uploaded_file($_FILES['preview']['tmp_name'])) {
         $tmp_name = $_FILES['preview']['tmp_name'];
-        $path = uniqid();
+        if (!is_dir('uploads/')) {
+            mkdir('uploads/');
+        }
+        $path = uniqid() . $_FILES['preview']['name'];
         move_uploaded_file($tmp_name, 'uploads/' . $path);
-        $file = $path;
+        $file = $path ;
     }
     else {
         $file = null;
     }
+
     if (empty($errors)) {
         add_task_form($link, $task_name, $file, $deadline, $user_id, $project_name);
         header("Location: /index.php");

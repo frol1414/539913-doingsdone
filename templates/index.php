@@ -41,7 +41,7 @@
                 </td>
 
                 <td class="task__file">
-                    <?php if (isset($key['file'])) :?>
+                <?php if (isset($key['file'])) :?>
                     <a class="download-link" href="<?= 'uploads/' . $key['file']; ?>"></a>
                 <?php endif;?>
                 </td>
